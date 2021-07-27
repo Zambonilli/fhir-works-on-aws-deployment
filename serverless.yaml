@@ -606,7 +606,7 @@ resources:
                     Resource:
                       - !GetAtt DynamodbKMSKey.Arn
                       - !GetAtt ElasticSearchKMSKey.Arn
-      SyntheticRole:
+      SyntheticsRole:
         Type: AWS::IAM::Role
         Properties:
           AssumeRolePolicyDocument:
