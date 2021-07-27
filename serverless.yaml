@@ -641,6 +641,7 @@ resources:
                       - 's3:GetBucketLocation'
                     Resource:
                       - !GetAtt SyntheticsBucket.Arn
+                      - !Join ['', [!GetAtt SyntheticsBucket.Arn, '/*']]
                   - Effect: Allow
                     Action:
                       - 's3:ListAllMyBuckets'
