@@ -17,6 +17,8 @@ FHIR Works on AWS utilizes AWS Lambda, Amazon DynamoDB, Amazon S3 and Amazon Ela
 
 The easiest and quickest way to access FHIR Works on AWS is by using [AWS solution](https://aws.amazon.com/solutions/implementations/fhir-works-on-aws/). To modify the code and set up a developer environment, follow the steps below:
 
+**Note**: AWS Solution provides an earlier version(See Solutions [CHANGELOG](https://github.com/awslabs/fhir-works-on-aws-deployment/blob/aws-solution/CHANGELOG.md) for more details) of FWoA install. Please follow the instruction below to install from GitHub repository if you wish to install the latest version.
+
 1. Clone or download the repository to a local directory.
  
 Example:
@@ -63,7 +65,7 @@ This project is licensed under the Apache-2.0 license.
 
 ### Retrieving user variables
 
-After installation, all user-specific variables (such as `USER_POOL_APP_CLIENT_ID`) can be found in the `INFO_OUTPUT.yml` file. You can also retrieve these values by running the following command:
+After installation, all user-specific variables (such as `USER_POOL_APP_CLIENT_ID`) can be found in the `Info_Output.log` file. You can also retrieve these values by running the following command:
 ```
 serverless info --verbose --region <REGION> --stage <STAGE>. 
 ```
@@ -101,7 +103,7 @@ Set up the following three environment variables:
 
 For instructions on importing the environment JSON, click [here](https://thinkster.io/tutorials/testing-backend-apis-with-postman/managing-environments-in-postman).
 
-The following variables required in the Postman collection can be found in `Info_Output.yml` or by running `serverless info --verbose`:
+The following variables required in the Postman collection can be found in `Info_Output.log` or by running `serverless info --verbose`:
 + API_URL: from Service Information:endpoints: ANY
 + API_KEY: from Service Information: api keys: developer-key
 + CLIENT_ID: from Stack Outputs: UserPoolAppClientId
@@ -138,7 +140,7 @@ To access the FHIR API, an access token is required. This can be obtained by fol
 
 **Retrieving an access token using aws.cognito.signin.user.admin**
 
-A Cognito OAuth access token can be obtained using the following command substituting all variables with their values from `INFO_OUTPUT.yml` or by using the `serverless info --verbose` command.
+A Cognito OAuth access token can be obtained using the following command substituting all variables with their values from `Info_Output.log` or by using the `serverless info --verbose` command.
 +	For Windows, enter:
 ```sh
 scripts/init-auth.py <CLIENT_ID> <REGION>
