@@ -86,8 +86,7 @@ resources:
         BucketEncryption:
           ServerSideEncryptionConfiguration:
             - ServerSideEncryptionByDefault:
-                SSEAlgorithm: aws:kms
-                KMSMasterKeyID: !Ref S3KMSKey
+                SSEAlgorithm: AES256
     AuditLogsBucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
