@@ -82,6 +82,12 @@ resources:
   Resources:
     AuditLogsBucket:
       Type: AWS::S3::Bucket
+      Properties:
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: aws:kms
+                KMSMasterKeyID: !Ref S3KMSKey
     AuditLogsBucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
