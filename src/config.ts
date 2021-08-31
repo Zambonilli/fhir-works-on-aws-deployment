@@ -86,8 +86,8 @@ export const fhirConfig: FhirConfig = {
     configVersion: 1.0,
     productInfo: {
         orgName: 'ResMed',
-        productTitle: "Connected Health Platform",
-        productVersion: "0.3.0"
+        productTitle: 'Connected Health Platform',
+        productVersion: '0.3.0',
     },
     auth: {
         authorization: authService,
