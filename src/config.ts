@@ -85,7 +85,9 @@ const OAuthUrl =
 export const fhirConfig: FhirConfig = {
     configVersion: 1.0,
     productInfo: {
-        orgName: 'Organization Name',
+        orgName: 'ResMed',
+        productTitle: "Connected Health Platform",
+        productVersion: "0.3.0"
     },
     auth: {
         authorization: authService,
