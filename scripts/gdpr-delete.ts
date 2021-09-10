@@ -6,13 +6,13 @@ import * as _ from 'lodash';
 
 /*
     Script to perform a GDPR delete of AuditEvent records
-    `AWS_REGION=$your-aws-region npx ts-node gdpr-delete.ts --clientId $your-cognito-client-id --username airview --password $your-airview-password --apiUrl $your-chp-api-url --apiKey $your-chp-api-key --ecn $your-ecn`
-    EG: AWS_REGION=us-west-2 npx ts-node ./scripts/gdpr-delete.ts --clientId $CLIENT_ID --username airview --password $PASSWORD --apiUrl https://cr8nfyke7a.execute-api.us-west-2.amazonaws.com/dev --apiKey $API_KEY --ecn 52d4e66f-f2c7-478b-a38a-16e7b7777777
+    `AWS_REGION=$your-aws-region npx ts-node gdpr-delete.ts --clientId $your-cognito-client-id --username airview --password $your-airview-password --apiUrl $your-fwoa-api-url --apiKey $your-fwoa-api-key --patientId $your-patientId`
+    EG: AWS_REGION=us-west-2 npx ts-node ./scripts/gdpr-delete.ts --clientId $CLIENT_ID --username airview --password $PASSWORD --apiUrl https://cr8nfyke7a.execute-api.us-west-2.amazonaws.com/dev --apiKey $API_KEY --patientId 52d4e66f-f2c7-478b-a38a-16e7b7777777
 */
 
 function parseCmdOptions() {
     return yargs(process.argv.slice(2))
-        //.usage('Usage: $0 --clientId, -c oAuth2 clientID --username, -u oAuth2 username --password, -p oAuth2 password --apiUrl -a CHP API Url --apiKey -k CHP API Key')
+        //.usage('Usage: $0 --clientId, -c oAuth2 clientID --username, -u oAuth2 username --password, -p oAuth2 password --apiUrl -a fwoa API Url --apiKey -k fwoa API Key')
         .option('clientId', {
             alias: 'c',
             type: 'string',
@@ -34,25 +34,25 @@ function parseCmdOptions() {
         .option('apiUrl', {
             alias: 'au',
             type: 'string',
-            describe: 'CHP API URL',
+            describe: 'fwoa API URL',
             demandOption: true
         })
         .option('apiKey', {
             alias: 'ak',
             type: 'string',
-            describe: 'CHP API Key',
+            describe: 'fwoa API Key',
             demandOption: true
         })
-        .option('ecn', {
-            alias: 'e',
+        .option('patientId', {
+            alias: 'pi',
             type: 'string',
-            describe: 'Easycare Number of the patient to delete all data for',
+            describe: 'PatientId of the patient to delete all data for',
             demandOption: true
         })
         .option('retries', {
             alias: 'r',
             type: 'number',
-            describe: 'number of times to retry CHP calls',
+            describe: 'number of times to retry fwoa calls',
             default: 5
         })
         .option('wait', {
@@ -66,11 +66,11 @@ function parseCmdOptions() {
 
 (async ()=>{
     try {
-        // get the ECN from standard input
+        // get the details from standard input
         const cmdArgs = parseCmdOptions();
 
-        // login to CHP using the cognito AWS SDK
-        console.log(`starting gdpr delete for ECN: ${cmdArgs.ecn}`);
+        // login to fwoa using the cognito AWS SDK
+        console.log(`starting gdpr delete for PatientId: ${cmdArgs.patientId}`);
         
         console.log(`logging in to oAuth2 as ${cmdArgs.username}`);
         const cognito = new AWS.CognitoIdentityServiceProvider();
@@ -88,8 +88,8 @@ function parseCmdOptions() {
         }
         console.log(`successfully logged in to oAuth2 as ${cmdArgs.username}`);
 
-        // create CHP client
-        const chp = axios.create({
+        // create fwoa client
+        const fwoa = axios.create({
             baseURL: cmdArgs.apiUrl,
             timeout: 60000,
             headers: {
@@ -103,7 +103,7 @@ function parseCmdOptions() {
         let deleteIds = new Set();
         for (let i =0; i < Infinity; i+=20){
             // parse out the next and skip
-            let query = `AuditEvent?_sort=-date&patient=Patient/${cmdArgs.ecn}&_count=20&_getpagesoffset=${i}`;
+            let query = `AuditEvent?_sort=-date&patient=Patient/${cmdArgs.patientId}&_count=20&_getpagesoffset=${i}`;
             
             let searchResponse!: AxiosResponse;
             for (let j =0; j < cmdArgs.retries; j++){
@@ -112,7 +112,7 @@ function parseCmdOptions() {
                 }
 
                 console.log(`calling GET AuditEvent ${query}`);
-                searchResponse = await chp.get(query);
+                searchResponse = await fwoa.get(query);
 
                 if (searchResponse.status === 200){
                     console.log(`successfully called GET AuditEvent ${query}`);
@@ -135,7 +135,7 @@ function parseCmdOptions() {
                 if (whatEntities.length > 1){
                     _.remove(entry.resource.entity, (entity: any)=>{
                         if (_.has(entity, 'what')){
-                            return entity.what.reference === `Patient/${cmdArgs.ecn}`;
+                            return entity.what.reference === `Patient/${cmdArgs.patientId}`;
                         } else {
                             return false;
                         }
@@ -148,8 +148,8 @@ function parseCmdOptions() {
                             await new Promise((resolve) =>{ setTimeout(resolve, cmdArgs.wait); });
                         }
         
-                        console.log(`calling PUT AuditEvent ${entry.resource.id} to remove ECN`);
-                        putResponse = await chp.put(
+                        console.log(`calling PUT AuditEvent ${entry.resource.id} to remove patientId`);
+                        putResponse = await fwoa.put(
                             `AuditEvent/${entry.resource.id}`,
                             entry.resource
                         );
@@ -185,7 +185,7 @@ function parseCmdOptions() {
                 }
 
                 console.log(`calling DELETE AuditEvent ${deleteId}`)
-                deleteResponse = await chp.delete(`AuditEvent/${deleteId}`);
+                deleteResponse = await fwoa.delete(`AuditEvent/${deleteId}`);
 
                 // confirm we've successfully deleted
                 if (deleteResponse.status === 200) {
@@ -199,7 +199,7 @@ function parseCmdOptions() {
             }
         }
 
-        console.log(`successfully completed gdpr delete for ECN: ${cmdArgs.ecn}`);
+        console.log(`successfully completed gdpr delete for patientId: ${cmdArgs.patientId}`);
     } catch (err){
         console.log('Error performing GDPR delete');
         console.log(err);
