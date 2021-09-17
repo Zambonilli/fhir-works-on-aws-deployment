@@ -578,7 +578,7 @@ Resources:
   CloudWatchAlarmSNSTopic:
     Type: AWS::SNS::Topic
     Properties: 
-      TopicName: !Join ['.', [FhirSolution, !Ref Stage, cloudwatch, alarm, topic]]
+      TopicName: !Join ['-', [FhirSolution, !Ref Stage, cloudwatch, alarm, topic]]
   CloudWatchAlarmSNSTopicPolicy:
     Type: AWS::SNS::TopicPolicy
     DependsOn: CloudWatchAlarmSNSTopic
