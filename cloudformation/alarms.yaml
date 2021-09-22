@@ -805,7 +805,7 @@ Resources:
         - !Ref FhirWorksAlarmSNSTopic
       AlarmActions:
         - !Ref FhirWorksAlarmSNSTopic
-  CloudWatchAlarmSNSTopic:
+  FhirWorksAlarmSNSTopic:
     Type: AWS::SNS::Topic
     Properties: 
       DisplayName: !Join ['-', [FhirSolution, !Ref Stage, cloudwatch, alarm, topic]]
