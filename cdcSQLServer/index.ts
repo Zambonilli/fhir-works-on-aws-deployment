@@ -40,7 +40,7 @@ exports.handler = async (event: any) => {
                     break;
                 case REMOVE:
                     procedureName = 'chp_delete_note';
-                    request.input('id', sql.BigInt, 1);
+                    request.input('id', sql.BigInt, await getEcoIdFromFhirId(record.dynamodb.NewImage.id));
                     break;
             }
 
