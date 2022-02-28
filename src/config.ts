@@ -109,7 +109,7 @@ export const fhirConfig: FhirConfig = {
             process.env.API_URL === '[object Object]' || process.env.API_URL === undefined
                 ? 'https://API_URL.com'
                 : process.env.API_URL,
-        dynamicHostName: process.env.API_URL_DYNAMIC_HOST_NAME === 'true',
+        dynamicHostName: process.env.ENABLE_DYNAMIC_HOST_NAME === 'true',
     },
     validators,
     profile: {

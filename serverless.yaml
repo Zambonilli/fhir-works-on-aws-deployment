@@ -39,7 +39,7 @@ provider:
     FHIR_SERVICE: 'fhir-service-${self:custom.region}-${self:custom.stage}'
   environment:
     API_URL:
-      !Join ['', ['https://', !Ref ApiGatewayRestApi, !Sub '.execute-api.${AWS::Region}.amazonaws.com/', !Ref Stage]]
+      !Join ['', ['https://', !Ref FHIRServicePrivate, !Sub '.execute-api.${AWS::Region}.amazonaws.com/', !Ref Stage]]
     S3_KMS_KEY: !Ref S3KMSKey
     RESOURCE_TABLE: '${self:custom.resourceTableName}'
     EXPORT_REQUEST_TABLE: '${self:custom.exportRequestTableName}'
