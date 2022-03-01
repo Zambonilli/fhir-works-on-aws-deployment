@@ -109,7 +109,7 @@ functions:
     environment:
       EXPORT_STATE_MACHINE_ARN: !Ref BulkExportStateMachine
       ARCHIVE_CONFIG: ${env:ARCHIVE_CONFIG, ''}
-      ENABLE_DYNAMIC_HOST_NAME: ${self:custom.enableDynamicHostName}
+      ENABLE_DYNAMIC_HOST_NAME: '${self:custom.enableDynamicHostName}'
 
   ddbToEs:
     timeout: 300
